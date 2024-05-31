@@ -38,7 +38,7 @@ def test_load_page():
 def test_get_page_data(scrap_with_page_loaded):
     scrap_with_page_loaded.get_page_data()
     assert len(scrap_with_page_loaded.data) != 0
-    assert len(scrap_with_page_loaded.data[0]) == 5
+    assert len(scrap_with_page_loaded.data[0]) == 7
 
  
 def test_create_dataframe(scrap_all_done_no_df):

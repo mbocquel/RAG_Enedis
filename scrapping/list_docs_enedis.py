@@ -51,7 +51,7 @@ class ScrapListDocsEnedis:
         scrapping.append(scrap_elem)
 
         for pdf in scrapping:
-            new_data = [[""]] * 5
+            new_data = [[""]] * 7
             for elem in pdf:
                 if type(elem) == list and len(elem):
                     if "attrs" in elem[0].__dict__ and 'href' in elem[0].__dict__.get("attrs") and 'aria-label' not in elem[0].__dict__.get("attrs"):
@@ -59,7 +59,14 @@ class ScrapListDocsEnedis:
                     elif "attrs" in elem[0].__dict__ and 'datetime' in elem[0].__dict__.get("attrs"):
                         new_data[2] = elem[0].__dict__.get("attrs").get('datetime')
                     elif "attrs" in elem[0].__dict__ and 'aria-label' in elem[0].__dict__.get("attrs"):
-                        new_data[4] = elem[0].__dict__.get("attrs").get('aria-label')
+                        file_info = elem[0].__dict__.get("attrs").get('aria-label')
+                        infos = str(file_info).split(",")
+                        if len(infos) == 3:
+                            new_data[4] = infos[0].strip()
+                            new_data[5] = infos[1].strip()
+                            new_data[6] = infos[2].strip()
+                        else:
+                            new_data[4] = file_info
                     elif new_data[1] == [""]:
                         new_data[1] = str(elem[0]).strip().replace(",", ";")
                     else:
@@ -84,7 +91,7 @@ class ScrapListDocsEnedis:
         """
         if len(self.data) == 0:
             return
-        self.dataframe = pd.DataFrame(self.data, columns=['url', 'type', "date", "content", "file_info"])
+        self.dataframe = pd.DataFrame(self.data, columns=['url', 'type', "date", "content", "file_name", "file_type", "file_size"])
 
 
     def save_dataframe_to_csv(self, path = "documents_enedis.csv"):

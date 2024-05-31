@@ -15,3 +15,5 @@ pillow_heif
 opencv-python
 pdf2image
 pikepdf
+nltk
+sentence-transformers

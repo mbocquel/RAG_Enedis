@@ -17,3 +17,9 @@ pdf2image
 pikepdf
 nltk
 sentence-transformers
+unstructured_inference
+pytesseract
+poppler-utils
+pdf2image
+python-dateutil
+faiss-cpu

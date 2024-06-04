@@ -6,7 +6,7 @@ import os
 import langchain_core
 import langchain_community
 import random
-
+import shutil
 
 @pytest.fixture()
 def generate_pd():
@@ -20,7 +20,6 @@ def generate_pd():
         "1.45 Mo"
     ]]
     df = pd.DataFrame(data, columns=['url', 'type', "date", "content", "file_name", "file_type", "file_size"])
-    print("toto ", random.random())
     indexing = IndexingPdfData(df)
     yield indexing
 
@@ -58,11 +57,10 @@ def test_save_vdb_to_file(generate_pd):
     """
     generate_pd.parse_all_pdf()
     generate_pd.create_vector_database()
-    test_dir = tempfile.TemporaryDirectory()
-    tmp_file_name = os.path.join(test_dir.name, f'db')
-    generate_pd.save_vdb_to_file(tmp_file_name)
-    assert os.path.isfile(tmp_file_name)
-    os.remove(tmp_file_name)
+    test_dir = "__test1_faiss_index"
+    generate_pd.save_vdb_to_file(test_dir)
+    assert os.path.isdir(test_dir)
+    shutil.rmtree(test_dir)
 
 
 def test_load_vdb_from_file(generate_pd):
@@ -71,15 +69,14 @@ def test_load_vdb_from_file(generate_pd):
     """
     generate_pd.parse_all_pdf()
     generate_pd.create_vector_database()
-    test_dir = tempfile.TemporaryDirectory()
-    tmp_file_name = os.path.join(test_dir.name, f'db')
-    generate_pd.save_vdb_to_file(tmp_file_name)
+    test_dir = "__test2_faiss_index"
+    generate_pd.save_vdb_to_file(test_dir)
     generate_pd.db = None
     assert generate_pd.db is None
-    generate_pd.load_vdb_from_file(tmp_file_name)
+    generate_pd.load_vdb_from_file(test_dir)
     assert generate_pd.db is not None
-    assert type(generate_pd) == langchain_community.vectorstores.faiss.FAISS
-    os.remove(tmp_file_name)
+    assert type(generate_pd.db) == langchain_community.vectorstores.faiss.FAISS
+    shutil.rmtree(test_dir)
 
 
 def test_similarity_search(generate_pd):

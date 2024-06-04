@@ -1,12 +1,12 @@
 import requests
 import pandas as pd
 import os
-from langchain.document_loaders import UnstructuredPDFLoader
+from langchain_community.document_loaders import UnstructuredPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 import getpass
 from dotenv import load_dotenv, find_dotenv
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 import logging
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,8 @@ class IndexingPdfData:
     def parse_one_pdf(self, index, row):
         """Download the pdf and add it to the list of parced element"""
         file = row["url"]
-        logger.info(f"{index} - File {row["file_name"]} loaded")
+        file_name = row["file_name"]
+        logger.info(f"{index} - File {file_name} loaded")
         pdf = requests.get(file)
         file_path = os.path.join(self.pdf_folder_path, row["file_name"])
         with open(file_path, 'wb') as f:
@@ -86,10 +87,10 @@ class IndexingPdfData:
         """
         Load a vector database from a file
         """
-        if not os.path.isfile(path):
+        if not os.path.isdir(path):
             return
         logger.info(f"Vector database loaded from {path}")
-        self.db = FAISS.load_local(path, self.embeddings)
+        self.db = FAISS.load_local(path, self.embeddings, allow_dangerous_deserialization=True)
 
 
     def similarity_search(self, query:str):

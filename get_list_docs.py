@@ -1,5 +1,6 @@
 from scrapping.list_docs_enedis import ScrapListDocsEnedis
 
+
 def main():
     """
     This program collect data from the Enedis documentation website,
@@ -9,6 +10,7 @@ def main():
     scrap.scrap_all()
     scrap.create_dataframe()
     scrap.save_dataframe_to_csv()
+
 
 if __name__ == "__main__":
     main()

@@ -204,3 +204,11 @@
 2024-06-04 18:06:16,744 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
 2024-06-04 18:06:17,161 - indexing.indexing_data - INFO - HuggingFace token loaded from .env file
 2024-06-04 18:06:17,241 - indexing.indexing_data - INFO - Similarity search done with electricite
+2024-06-05 17:16:41,738 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-05 17:16:41,739 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-05 17:16:45,337 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-05 17:16:45,338 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-05 17:16:46,655 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-05 17:16:46,656 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-05 17:16:48,127 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-05 17:16:48,128 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded

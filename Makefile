@@ -1,4 +1,5 @@
 install:
+	sudo apt update && sudo apt install ffmpeg libsm6 libxext6  -y
 	pip install --upgrade pip &&\
 			pip install -r requirements.txt
 

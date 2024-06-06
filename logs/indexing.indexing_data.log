@@ -220,3 +220,24 @@
 2024-06-06 09:19:22,251 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
 2024-06-06 09:19:23,470 - indexing.indexing_data - INFO - IndexingPdfData initialised
 2024-06-06 09:19:23,471 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 09:55:02,217 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-06 09:55:29,973 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 09:59:56,952 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 10:02:18,742 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-06 10:02:18,747 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 10:02:25,860 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-06 10:02:25,861 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 10:02:26,612 - indexing.indexing_data - INFO - HuggingFace token loaded from .env file
+2024-06-06 10:02:33,194 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-06 10:02:33,194 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 10:02:34,026 - indexing.indexing_data - INFO - HuggingFace token loaded from .env file
+2024-06-06 10:02:35,844 - indexing.indexing_data - INFO - Vector database saved localy in __test1_faiss_index
+2024-06-06 10:02:37,027 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-06 10:02:37,028 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 10:02:37,775 - indexing.indexing_data - INFO - HuggingFace token loaded from .env file
+2024-06-06 10:02:39,731 - indexing.indexing_data - INFO - Vector database saved localy in __test2_faiss_index
+2024-06-06 10:02:39,732 - indexing.indexing_data - INFO - Vector database loaded from __test2_faiss_index
+2024-06-06 10:02:41,162 - indexing.indexing_data - INFO - IndexingPdfData initialised
+2024-06-06 10:02:41,163 - indexing.indexing_data - INFO - 0 - File Enedis-NMO-CF_007E.pdf loaded
+2024-06-06 10:02:41,888 - indexing.indexing_data - INFO - HuggingFace token loaded from .env file
+2024-06-06 10:02:43,762 - indexing.indexing_data - INFO - Similarity search done with electricite

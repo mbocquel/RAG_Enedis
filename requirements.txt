@@ -23,3 +23,4 @@ poppler-utils
 pdf2image
 python-dateutil
 faiss-cpu
+pylint

@@ -6,6 +6,7 @@ import time
 
 data = [
         [
+            "Démarche et règles d’établissement des Schémas de comptage et de Raccordement au Réseau Public de Distribution BT ou HTA des Installations de Production ou susceptibles d’injecter et de soutirer de puissance supérieure à 36 kVA",
             "https://www.enedis.fr/media/2057/download",
             " ",
             "2024-05-21T09:03:25+02:00",
@@ -18,6 +19,7 @@ data = [
 df = pd.DataFrame(
     data,
     columns=[
+        "title",
         "url",
         "type",
         "date",

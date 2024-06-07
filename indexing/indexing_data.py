@@ -27,8 +27,9 @@ class IndexingPdfData:
     """
 
     def __init__(self, dataframe: pd.core.frame.DataFrame) -> None:
-        assert dataframe.shape[1] == 7, "IndexingPdfData -> Wrong dataframe shape"
+        assert dataframe.shape[1] == 8, "IndexingPdfData -> Wrong dataframe shape"
         assert list(dataframe.columns) == [
+            "title",
             "url",
             "type",
             "date",

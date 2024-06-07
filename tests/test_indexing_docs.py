@@ -11,8 +11,9 @@ import shutil
 def generate_pd():
     data = [
         [
-            "https://www.enedis.fr/media/4107/download",
-            "Référentiel clientèle",
+            "Étude des variations rapides de tension pour le raccordement d’une production décentralisée en HTA",
+            "https://www.enedis.fr/media/2164/download",
+            "DOCUMENTATION TECHNIQUE DE RÉFÉRENCE",
             "2024-05-21T09:03:25+02:00",
             "Suite à la délibération de la CRE n° 2024-42 du 15 février 2024; relative à la mise en œuvre de la généralisation des options tarifaires à 4 plages temporelles du TURPE HTA-BT; cette procédure a pour objectif de préciser les modalités de mise en œuvre de la généralisation de l'option tarifaire à 4 plages temporelles.",
             "Enedis-NMO-CF_007E.pdf",
@@ -23,6 +24,7 @@ def generate_pd():
     df = pd.DataFrame(
         data,
         columns=[
+            "title",
             "url",
             "type",
             "date",

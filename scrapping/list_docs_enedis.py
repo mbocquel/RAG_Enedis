@@ -34,7 +34,7 @@ class ScrapListDocsEnedis:
     def get_page_data(self) -> list:
         """
         Collect the data from a page, return value :
-        [['url', 'type', "date", "content", "file_info"], [...]]
+        [['title', 'url', 'type', "date", "content", "file_info"], [...]]
         """
         if not self.curent_page:
             return
@@ -52,7 +52,7 @@ class ScrapListDocsEnedis:
         scrapping.append(scrap_elem)
 
         for pdf in scrapping:
-            new_data = [[""]] * 7
+            new_data = [[""]] * 8
             for elem in pdf:
                 if type(elem) == list and len(elem):
                     if (
@@ -60,28 +60,29 @@ class ScrapListDocsEnedis:
                         and "href" in elem[0].__dict__.get("attrs")
                         and "aria-label" not in elem[0].__dict__.get("attrs")
                     ):
-                        new_data[0] = "https://www.enedis.fr" + elem[0].__dict__.get(
+                        new_data[0] = elem[0].__dict__.get("contents")[0].strip().replace(",", ";")
+                        new_data[1] = "https://www.enedis.fr" + elem[0].__dict__.get(
                             "attrs"
                         ).get("href")
                     elif "attrs" in elem[0].__dict__ and "datetime" in elem[
                         0
                     ].__dict__.get("attrs"):
-                        new_data[2] = elem[0].__dict__.get("attrs").get("datetime")
+                        new_data[3] = elem[0].__dict__.get("attrs").get("datetime")
                     elif "attrs" in elem[0].__dict__ and "aria-label" in elem[
                         0
                     ].__dict__.get("attrs"):
                         file_info = elem[0].__dict__.get("attrs").get("aria-label")
                         infos = str(file_info).split(",")
                         if len(infos) == 3:
-                            new_data[4] = infos[0].strip()
-                            new_data[5] = infos[1].strip()
-                            new_data[6] = infos[2].strip()
+                            new_data[5] = infos[0].strip()
+                            new_data[6] = infos[1].strip()
+                            new_data[7] = infos[2].strip()
                         else:
-                            new_data[4] = file_info
-                    elif new_data[1] == [""]:
-                        new_data[1] = str(elem[0]).strip().replace(",", ";")
+                            new_data[5] = file_info
+                    elif new_data[2] == [""]:
+                        new_data[2] = str(elem[0]).strip().replace(",", ";")
                     else:
-                        new_data[3] = str(elem[0]).strip().replace(",", ";")
+                        new_data[4] = str(elem[0]).strip().replace(",", ";")
             self.data.append(new_data)
 
     def scrap_all(self):
@@ -103,6 +104,7 @@ class ScrapListDocsEnedis:
         self.dataframe = pd.DataFrame(
             self.data,
             columns=[
+                "title",
                 "url",
                 "type",
                 "date",

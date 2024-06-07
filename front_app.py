@@ -1,9 +1,8 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
 from indexing.indexing_data import IndexingPdfData
 from q_and_a.q_and_a import QAndA
-import streamlit as st
+
 
 @st.cache_resource(show_spinner="Analyse des documents en cours...")  
 def load_q_and_a(selection):
@@ -36,7 +35,7 @@ def dataframe_with_selections(df):
 
 def get_html_with_hover_for_selection(selection):
     html = '<h5>Liste des documents utilises pour la recherche :</h5><ul>'
-    for index, row in selection.iterrows():
+    for _, row in selection.iterrows():
         html += '<li><div title="'
         html += row["content"].replace(";", ",")
         html +='">'

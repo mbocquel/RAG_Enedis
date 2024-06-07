@@ -6,6 +6,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from configs.CFG import CFG
+from configs.config import Config
 import logging
 
 logger = logging.getLogger(__name__)
@@ -35,13 +37,14 @@ class IndexingPdfData:
             "file_type",
             "file_size",
         ]
+        self.config = Config.from_json(CFG).indexing
         self.docs = []
         self.db = None
         self.dataframe = dataframe
-        self.pdf_folder_path = "pdf_files"
+        self.pdf_folder_path = self.config.pdf_folder_path
         if not os.path.isdir(self.pdf_folder_path):
             os.mkdir(self.pdf_folder_path)
-        self.text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        self.text_splitter = CharacterTextSplitter(chunk_size=self.config.chunk_size, chunk_overlap=self.config.chunk_overlap)
         self.embeddings = HuggingFaceEmbeddings()
         logger.info("IndexingPdfData initialised")
 

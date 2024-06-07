@@ -12,6 +12,11 @@ CFG = {
         "chain_type":"stuff", 
         "verbose": True, 
         "result_french": True
+    }, 
+    "indexing":{
+        "pdf_folder_path": "pdf_files",
+        "chunk_size":1000,
+        "chunk_overlap":0
     }
 }
 

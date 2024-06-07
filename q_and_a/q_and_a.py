@@ -1,9 +1,17 @@
 from indexing.indexing_data import IndexingPdfData
 from langchain.chains.question_answering import load_qa_chain
-from langchain import HuggingFaceHub
-from langchain_community.llms import HuggingFaceEndpoint
-from configs.CFG import CFG
+from langchain_huggingface import HuggingFaceEndpoint
+from configs.CFG import CFG, my_prompt_template
 from configs.config import Config
+import logging
+
+
+logger = logging.getLogger(__name__)
+handler = logging.FileHandler(f"logs/{__name__}.log")
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 class QAndA:
@@ -25,25 +33,39 @@ class QAndA:
             chain_type=self.config.chain.chain_type,
             verbose=self.config.chain.verbose
             )
+        self.chain.llm_chain.prompt.template = my_prompt_template
         self.history = []
+        
     
-    def ask_question(self, query:str, save_history:bool=True) -> str:
+    def ask_question(self, query:str, save_history:bool=False) -> str:
         """
         Method that recieve a question, send it to the LLM and retrive the answer. 
         If save_historyy = True, the question and answer are saved. 
         """
-        pass
+        context_docs = self.index.db.similarity_search(query)
+        response = self.chain.invoke({"input_documents": context_docs, "question": query}, return_only_outputs=False)
+        logger.info(f"QandA for{query}")
+        if save_history:
+            self.history.append(response)
+        return response
 
     
-    def get_history(self, index_start=0, index_end=None):
+    def get_history(self, index_start=None, index_end=None):
         """
         Retrieve the history of question and answer asked
         """
-        pass
+        if index_start is None and index_end is None:
+            return self.history
+        elif index_start is None:
+            return self.history[:index_end + 1]
+        elif index_end is None:
+            return self.history[index_start:]
+        else:
+            return self.history[index_start:index_end + 1]
 
 
     def clear_history(self):
         """
         Clear the Q and A history
         """
-        pass
+        self.history.clear()

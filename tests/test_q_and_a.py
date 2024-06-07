@@ -92,9 +92,18 @@ def test_clear_history(generate_q_and_a):
     Test the clear_history method
     """
     query_1 = "D'apres le code de l'energie, qui est responsable du comptage de l'electricite sur le reseau de distribution ?"
-    answer_1 = generate_q_and_a.ask_question(query_1, save_history=True)
+    generate_q_and_a.ask_question(query_1, save_history=True)
 
     assert len(generate_q_and_a.history) > 0
     generate_q_and_a.clear_history()
     assert len(generate_q_and_a.history) == 0
+
+
+def test_question_off_topic(generate_q_and_a):
+    """
+    Test the q and a with an off topic question
+    """
+    query = "Quel est le meilleur candidat pour les elections europeennes de juin 2024 ?"
+    answer = generate_q_and_a.ask_question(query)
+    assert answer["output_text"].strip() == "HORS SUJET"
 

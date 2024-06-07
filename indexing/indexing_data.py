@@ -4,7 +4,7 @@ import os
 from langchain_community.document_loaders import UnstructuredPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import logging
 
@@ -101,5 +101,8 @@ class IndexingPdfData:
         """
         Find documents in the database that are similar to the querry and return them
         """
+        if self.db is None:
+            logger.error("Similarity search requiered but ne vector database is found")
+            return
         logger.info(f"Similarity search done with {query}")
         return self.db.similarity_search(query)

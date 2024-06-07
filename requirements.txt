@@ -4,6 +4,7 @@ pytest
 python-dotenv
 langchain
 langchain-community
+langchain-huggingface
 langchainhub
 langchain-openai
 langchain-chroma

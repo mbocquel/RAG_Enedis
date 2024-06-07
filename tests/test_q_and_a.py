@@ -2,6 +2,7 @@ from q_and_a.q_and_a import QAndA
 import pytest
 import pandas as pd
 from indexing.indexing_data import IndexingPdfData
+import time
 
 data = [
         [
@@ -41,6 +42,7 @@ def test_ask_question(generate_q_and_a):
     """
     Test the ask question method
     """
+    time.sleep(5)
     query = "D'apres le code de l'energie, qui est responsable du comptage de l'electricite sur le reseau de distribution ?"
     answer = generate_q_and_a.ask_question(query, save_history=False)
     expected_answer_struct = {"input_documents": [], 
@@ -58,10 +60,13 @@ def test_get_history(generate_q_and_a):
     """
     Test the get_history method
     """
+    time.sleep(5)
     query_1 = "D'apres le code de l'energie, qui est responsable du comptage de l'electricite sur le reseau de distribution ?"
     answer_1 = generate_q_and_a.ask_question(query_1, save_history=True)
+    time.sleep(5)
     query_2 = "Quelle est la démarche d’instruction du schéma de Raccordement et de Comptage?"
     answer_2 = generate_q_and_a.ask_question(query_2, save_history=True)
+    time.sleep(5)
     query_3 = "Quelles sont les differentes fonctions de comptage qui existent ?"
     answer_3 = generate_q_and_a.ask_question(query_3, save_history=True)
 
@@ -91,6 +96,7 @@ def test_clear_history(generate_q_and_a):
     """
     Test the clear_history method
     """
+    time.sleep(5)
     query_1 = "D'apres le code de l'energie, qui est responsable du comptage de l'electricite sur le reseau de distribution ?"
     generate_q_and_a.ask_question(query_1, save_history=True)
 
@@ -103,6 +109,7 @@ def test_question_off_topic(generate_q_and_a):
     """
     Test the q and a with an off topic question
     """
+    time.sleep(5)
     query = "Quel est le meilleur candidat pour les elections europeennes de juin 2024 ?"
     answer = generate_q_and_a.ask_question(query)
     assert answer["output_text"].strip() == "HORS SUJET"

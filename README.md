@@ -1,17 +1,36 @@
 # RAG Enedis
 
-On going project ..
+This project is an exploration of LLM, LangChain and RAG. I created a streamlit applicaton where you can select a document from the enedis PDF library : https://www.enedis.fr/documents
 
-## What do I want to do 
-I want to experiment with practival use cases for LLM, Hugging Face API and LamgChain. So I decided to build a chatbot that can use RAG technique to answer questions based on Enedis official Client and Technical documentation (yes I use to work in the energy field... ) : https://www.enedis.fr/documents
+## What the program does : 
+- Download the file
+- Transform the pdf file into a FAISS vector database. 
+- Transform the question into a vector and does a similarity search with the database. 
+- Create a RAG LangChain with a specific prompt template (see in config/CFG.py)
+- Send the request to the Mistral / HuggingFace API
+- Show the result
+
+## Run the program 
+```
+make install && make get_list && make run_app
+```
+
+### Select a document and ask a question
+<div align="center">
+<img src="img/EnedisRAG1.png" alt="EnedisRAG1"/>
+</div>
+
+### Get your answer ! 
+
+<div align="center">
+<img src="img/EnedisRAG2.png" alt="EnedisRAG1"/>
+</div>
+
 
 ### Web Scaraping 
 The first step is to scrap the Enedis documentation website (https://www.enedis.fr/documents) to retrieve the list of all pdf documents available. Do to that I used BS4 library. 
 
-### Embedding vector database
-To do : 
-- Read and extract the text in the pdf documents (prototype done)
-- Embed the chuncks of text and store them in a vector database
-- Create a LLM chain with LangChain to answer technical questions using the informations in the documents 
-- Build an API and a frond end to make it nicer. 
-- Deploy this app. 
+### Features that will be implemented soon
+- Use a streaming chain to reduce the waiting time
+- Create other pages in the app with a chatbot able to look into a mock client database (experimenation with Agents)
+

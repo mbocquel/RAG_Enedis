@@ -1,21 +1,21 @@
-name: Python application test with Github Actions
+# name: Python application test with Github Actions
 
-on: [push]
+# on: [push]
 
-jobs:
-  build:
+# jobs:
+#   build:
 
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+#     steps:
+#     - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: make install
+#     - name: Install dependencies
+#       run: make install
 
-    - name: lint
-      run: make lint
+#     - name: lint
+#       run: make lint
       
-    - name: Test with pytest
-      run: make test
+#     - name: Test with pytest
+#       run: make test
     

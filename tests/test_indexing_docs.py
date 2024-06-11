@@ -3,7 +3,8 @@ import pytest
 import pandas as pd
 import os
 import langchain_core
-import langchain_community
+from langchain_core.documents.base import Document
+from langchain_community.vectorstores.faiss import FAISS
 import shutil
 
 
@@ -47,7 +48,7 @@ def test_parse_all_pdf(generate_pd):
     test_key = {"page_content": [], "metadata": [], "type": []}
     assert len(generate_pd.docs) > 0
     assert len(generate_pd.docs[0]) > 0
-    assert type(generate_pd.docs[0][0]) == langchain_core.documents.base.Document
+    assert isinstance(generate_pd.docs[0][0], Document)
     assert generate_pd.docs[0][0].__dict__.keys() == test_key.keys()
 
 
@@ -84,7 +85,7 @@ def test_load_vdb_from_file(generate_pd):
     assert generate_pd.db is None
     generate_pd.load_vdb_from_file(test_dir)
     assert generate_pd.db is not None
-    assert type(generate_pd.db) == langchain_community.vectorstores.faiss.FAISS
+    assert isinstance(generate_pd.db, FAISS)
     shutil.rmtree(test_dir)
 
 
@@ -95,6 +96,6 @@ def test_similarity_search(generate_pd):
     generate_pd.parse_all_pdf()
     generate_pd.create_vector_database()
     docs = generate_pd.similarity_search("electricite")
-    assert type(docs) == list
+    assert isinstance(docs, list)
     if len(docs) > 0:
-        assert type(docs[0]) == langchain_core.documents.base.Document
+        assert isinstance(docs[0], Document)

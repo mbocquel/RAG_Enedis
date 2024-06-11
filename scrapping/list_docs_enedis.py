@@ -31,13 +31,13 @@ class ScrapListDocsEnedis:
         else:
             self.num_page = -1
 
-    def get_page_data(self) -> list:
+    def get_page_data(self) -> None:
         """
         Collect the data from a page, return value :
         [['title', 'url', 'type', "date", "content", "file_info"], [...]]
         """
         if not self.curent_page:
-            return
+            raise Exception("The page does not exist")
         scrapping = []
         scrap_elem = []
         sep_list = [elem == self.curent_page[0] for elem in self.curent_page]
@@ -54,7 +54,7 @@ class ScrapListDocsEnedis:
         for pdf in scrapping:
             new_data = [[""]] * 8
             for elem in pdf:
-                if type(elem) == list and len(elem):
+                if isinstance(elem, list) and len(elem):
                     if (
                         "attrs" in elem[0].__dict__
                         and "href" in elem[0].__dict__.get("attrs")
@@ -74,15 +74,15 @@ class ScrapListDocsEnedis:
                         file_info = elem[0].__dict__.get("attrs").get("aria-label")
                         infos = str(file_info).split(",")
                         if len(infos) == 3:
-                            new_data[5] = infos[0].strip()
-                            new_data[6] = infos[1].strip()
-                            new_data[7] = infos[2].strip()
+                            new_data[5] = [infos[0].strip()]
+                            new_data[6] = [infos[1].strip()]
+                            new_data[7] = [infos[2].strip()]
                         else:
                             new_data[5] = file_info
                     elif new_data[2] == [""]:
-                        new_data[2] = str(elem[0]).strip().replace(",", ";")
+                        new_data[2] = [str(elem[0]).strip().replace(",", ";")]
                     else:
-                        new_data[4] = str(elem[0]).strip().replace(",", ";")
+                        new_data[4] = [str(elem[0]).strip().replace(",", ";")]
             self.data.append(new_data)
 
     def scrap_all(self):

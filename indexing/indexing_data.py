@@ -10,6 +10,7 @@ from configs.CFG import CFG
 from configs.config import Config
 import logging
 
+
 logger = logging.getLogger(__name__)
 handler = logging.FileHandler(f"logs/{__name__}.log")
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -26,7 +27,7 @@ class IndexingPdfData:
     chunks of data, embed the text into a vector using HuggingFaceEmbeddings
     """
 
-    def __init__(self, dataframe: pd.core.frame.DataFrame) -> None:
+    def __init__(self, dataframe: pd.DataFrame) -> None:
         assert dataframe.shape[1] == 8, "IndexingPdfData -> Wrong dataframe shape"
         assert list(dataframe.columns) == [
             "title",
@@ -45,7 +46,9 @@ class IndexingPdfData:
         self.pdf_folder_path = self.config.pdf_folder_path
         if not os.path.isdir(self.pdf_folder_path):
             os.mkdir(self.pdf_folder_path)
-        self.text_splitter = CharacterTextSplitter(chunk_size=self.config.chunk_size, chunk_overlap=self.config.chunk_overlap)
+        self.text_splitter = CharacterTextSplitter(
+            chunk_size=self.config.chunk_size, chunk_overlap=self.config.chunk_overlap
+        )
         self.embeddings = HuggingFaceEmbeddings()
         logger.info("IndexingPdfData initialised")
 

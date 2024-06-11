@@ -3,8 +3,10 @@ import pandas as pd
 from indexing.indexing_data import IndexingPdfData
 from q_and_a.q_and_a import QAndA
 
+st.set_page_config(page_title="Enedis RAG", page_icon="🤖")
 
-@st.cache_resource(show_spinner="Analyse des documents en cours...")  
+
+@st.cache_resource(show_spinner="Analyse des documents en cours...")
 def load_q_and_a(selection):
     index = None
     index = IndexingPdfData(selection)
@@ -13,7 +15,9 @@ def load_q_and_a(selection):
     q_and_a = QAndA(index)
     return q_and_a
 
+
 reponse = None
+
 
 def dataframe_with_selections(df):
     df_with_selections = df.copy()
@@ -30,22 +34,23 @@ def dataframe_with_selections(df):
 
     # Filter the dataframe using the temporary column, then drop the column
     selected_rows = edited_df[edited_df.Select]
-    return selected_rows.drop('Select', axis=1)
+    return selected_rows.drop("Select", axis=1)
 
 
 def get_html_with_hover_for_selection(selection):
-    html = '<h5>Liste des documents utilises pour la recherche :</h5><ul>'
+    html = "<h5>Liste des documents utilises pour la recherche :</h5><ul>"
     for _, row in selection.iterrows():
         html += '<li><div title="'
         html += row["content"].replace(";", ",")
-        html +='">'
+        html += '">'
         html += row["file_name"]
-        html += '</div>'
-    html += '</ul>'
+        html += "</div>"
+    html += "</ul>"
     return html
 
 
-st.markdown("""<style>
+st.markdown(
+    """<style>
             h1 {
                 text-align:center;
             }
@@ -56,7 +61,9 @@ st.markdown("""<style>
                 display: none;
                 height: 0;
             }
-            </style>""", unsafe_allow_html=True)
+            </style>""",
+    unsafe_allow_html=True,
+)
 
 st.markdown("<h1>Enedis RAG</h1>", unsafe_allow_html=True)
 
@@ -69,7 +76,14 @@ st.markdown(intro, unsafe_allow_html=True)
 
 # Selection des documents
 df = pd.read_csv("documents_enedis.csv", index_col=0)
-filters = st.multiselect("Type de document Enedis pour filtrer", list(set(df["type"].to_list())), default=None, placeholder="Choose an option", disabled=False, label_visibility="visible")
+filters = st.multiselect(
+    "Type de document Enedis pour filtrer",
+    list(set(df["type"].to_list())),
+    default=None,
+    placeholder="Choose an option",
+    disabled=False,
+    label_visibility="visible",
+)
 df_filter = df.query("type == @filters")
 selection = dataframe_with_selections(df_filter)
 
@@ -91,9 +105,12 @@ with st.form("Try the program !"):
 
 if reponse is not None:
     st.divider()
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <strong>Question: </strong><br>
     {reponse["question"]}<br><br>
     <strong>Reponse: </strong><br>
     {reponse["output_text"]}
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )

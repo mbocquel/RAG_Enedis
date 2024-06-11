@@ -5,18 +5,18 @@ CONFIG FILE FOR THE PROJECT
 CFG = {
     "llm": {
         "repo_id": "mistralai/Mixtral-8x7B-Instruct-v0.1", 
-        "temperature":0.1, 
+        "temperature": 0.1, 
         "max_new_tokens": 2000
     }, 
     "chain": {
-        "chain_type":"stuff", 
+        "chain_type": "stuff", 
         "verbose": True, 
         "result_french": True
     }, 
     "indexing":{
         "pdf_folder_path": "pdf_files",
-        "chunk_size":1000,
-        "chunk_overlap":0
+        "chunk_size": 1000,
+        "chunk_overlap": 250
     }
 }
 

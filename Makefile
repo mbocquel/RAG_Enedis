@@ -19,3 +19,6 @@ get_list:
 
 run_app:
 	streamlit run front_app.py --server.port=8501
+
+run_chat:
+	streamlit run chat_app.py --server.port=8501

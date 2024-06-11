@@ -31,6 +31,10 @@ make install && make get_list && make run_app
 The first step is to scrap the Enedis documentation website (https://www.enedis.fr/documents) to retrieve the list of all pdf documents available. Do to that I used BS4 library. 
 
 ### Features that will be implemented soon
-- Use a streaming chain to reduce the waiting time
-- Create other pages in the app with a chatbot able to look into a mock client database (experimenation with Agents)
-
+- Create a chatbot with Agents : 
+    - Function 1 : Search in the summary of Enedis document to give the user links to documents that can be helpfull
+    - Function 2 : Download a PDF document from the Enedis website, parse it like in the RAG and answer questions about it
+    - Function 3 : Send an email to the user with a summary of the conversation
+    - Function 4 : Create a summary of an Enedis PDF Document
+    - Function 5 : Search for client information in a database
+    - Function 6 : Save the conversation in a database for use later.

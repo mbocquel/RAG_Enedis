@@ -6,5 +6,6 @@
 *.log
 requirements_old.txt
 old
+*/__pycache__
 __pycache__
 .pytest_cache

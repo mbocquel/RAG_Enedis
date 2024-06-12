@@ -4,20 +4,20 @@ CONFIG FILE FOR THE PROJECT
 
 CFG = {
     "llm": {
-        "repo_id": "mistralai/Mixtral-8x7B-Instruct-v0.1", 
-        "temperature": 0.1, 
-        "max_new_tokens": 2000
-    }, 
-    "chain": {
-        "chain_type": "stuff", 
-        "verbose": True, 
-        "result_french": True
-    }, 
-    "indexing":{
+        "repo_id": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "temperature": 0.1,
+        "max_new_tokens": 2000,
+    },
+    "chain": {"chain_type": "stuff", "verbose": True, "result_french": True},
+    "indexing_pdf": {
         "pdf_folder_path": "pdf_files",
         "chunk_size": 1000,
-        "chunk_overlap": 250
-    }
+        "chunk_overlap": 250,
+    },
+    "indexing_csv": {
+        "csv_vdb_path": "vdb_csv_documents",
+        "csv_doc_path": "documents_enedis.csv",
+    },
 }
 
 

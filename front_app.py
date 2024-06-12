@@ -1,18 +1,26 @@
 import streamlit as st
 import pandas as pd
-from indexing.indexing_data import IndexingPdfData
+from indexing.indexing_pdf import IndexingPdfData
 from q_and_a.q_and_a import QAndA
 
 st.set_page_config(page_title="Enedis RAG", page_icon="🤖")
 
 
+@st.cache_resource(show_spinner="Creation de l'indexeur")
+def load_index():
+    index = IndexingPdfData()
+    return index
+
+
 @st.cache_resource(show_spinner="Analyse des documents en cours...")
-def load_q_and_a(selection):
-    index = None
-    index = IndexingPdfData(selection)
-    index.parse_all_pdf()
-    index.create_vector_database()
-    q_and_a = QAndA(index)
+def load_q_and_a(_index, selection: pd.DataFrame):
+    print(_index.set_url_added)
+    for elem in selection.to_numpy():
+        if (elem[1], elem[5]) not in _index.set_url_added:
+            _index.parse_one_pdf(elem[1], elem[5])
+    print(_index.set_url_added)
+    _index.create_vector_database()
+    q_and_a = QAndA(_index)
     return q_and_a
 
 
@@ -37,14 +45,19 @@ def dataframe_with_selections(df):
     return selected_rows.drop("Select", axis=1)
 
 
-def get_html_with_hover_for_selection(selection):
+def get_html_with_hover_for_selection(_index, selection):
     html = "<h5>Liste des documents utilises pour la recherche :</h5><ul>"
-    for _, row in selection.iterrows():
-        html += '<li><div title="'
-        html += row["content"].replace(";", ",")
-        html += '">'
-        html += row["file_name"]
+    for elem in _index.set_url_added:
+        html += "<li><div>"
+        html += elem[1]
         html += "</div>"
+    for _, row in selection.iterrows():
+        if (row["url"], row["file_name"]) not in _index.set_url_added:
+            html += '<li><div title="'
+            html += row["content"].replace(";", ",")
+            html += '">'
+            html += row["file_name"]
+            html += "</div>"
     html += "</ul>"
     return html
 
@@ -90,7 +103,10 @@ selection = dataframe_with_selections(df_filter)
 
 # Formulaire envoie
 with st.form("Try the program !"):
-    st.markdown(get_html_with_hover_for_selection(selection), unsafe_allow_html=True)
+    index = load_index()
+    st.markdown(
+        get_html_with_hover_for_selection(index, selection), unsafe_allow_html=True
+    )
     query = st.text_input("Quelle est votre question sur les documents ?")
     s_state = st.form_submit_button("Envoyer !")
     if s_state:
@@ -98,7 +114,7 @@ with st.form("Try the program !"):
             st.warning("Merci de poser une question !")
         else:
             with st.spinner("Merci de patienter pour le traitement de la question..."):
-                q_and_a = load_q_and_a(selection)
+                q_and_a = load_q_and_a(index, selection)
                 reponse = q_and_a.ask_question(query)
             st.success("Question traitee")
 

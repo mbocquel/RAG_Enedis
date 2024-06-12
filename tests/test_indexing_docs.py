@@ -1,101 +1,154 @@
-from indexing.indexing_data import IndexingPdfData
+from indexing.indexing_pdf import IndexingPdfData
+from indexing.indexing_csv import IndexingCSV
 import pytest
-import pandas as pd
 import os
-import langchain_core
 from langchain_core.documents.base import Document
 from langchain_community.vectorstores.faiss import FAISS
 import shutil
 
 
 @pytest.fixture()
-def generate_pd():
-    data = [
-        [
-            "Étude des variations rapides de tension pour le raccordement d’une production décentralisée en HTA",
-            "https://www.enedis.fr/media/2164/download",
-            "DOCUMENTATION TECHNIQUE DE RÉFÉRENCE",
-            "2024-05-21T09:03:25+02:00",
-            "Suite à la délibération de la CRE n° 2024-42 du 15 février 2024; relative à la mise en œuvre de la généralisation des options tarifaires à 4 plages temporelles du TURPE HTA-BT; cette procédure a pour objectif de préciser les modalités de mise en œuvre de la généralisation de l'option tarifaire à 4 plages temporelles.",
-            "Enedis-NMO-CF_007E.pdf",
-            "fichier PDF",
-            "1.45 Mo",
-        ]
-    ]
-    df = pd.DataFrame(
-        data,
-        columns=[
-            "title",
-            "url",
-            "type",
-            "date",
-            "content",
-            "file_name",
-            "file_type",
-            "file_size",
-        ],
-    )
-    indexing = IndexingPdfData(df)
-    yield indexing
+def generate_index_pdf():
+    index = IndexingPdfData()
+    yield index
 
 
-def test_parse_all_pdf(generate_pd):
+@pytest.fixture()
+def generate_index_csv():
+    index = IndexingCSV(load_existing=False)
+    yield index
+
+
+def test_parse_one_pdf(generate_index_pdf):
     """
     Test the parse one pdf function
     """
-
-    generate_pd.parse_all_pdf()
+    generate_index_pdf.parse_one_pdf(
+        "https://www.enedis.fr/media/2164/download", "Enedis-NMO-CF_007E.pdf"
+    )
     test_key = {"page_content": [], "metadata": [], "type": []}
-    assert len(generate_pd.docs) > 0
-    assert len(generate_pd.docs[0]) > 0
-    assert isinstance(generate_pd.docs[0][0], Document)
-    assert generate_pd.docs[0][0].__dict__.keys() == test_key.keys()
+    assert len(generate_index_pdf.docs) > 0
+    assert len(generate_index_pdf.docs[0]) > 0
+    assert isinstance(generate_index_pdf.docs[0][0], Document)
+    assert generate_index_pdf.docs[0][0].__dict__.keys() == test_key.keys()
 
 
-def test_create_vector_database(generate_pd):
+def test_create_vector_database(generate_index_pdf):
     """
     Test the create vector database function
     """
-    generate_pd.parse_all_pdf()
-    generate_pd.create_vector_database()
-    assert generate_pd.db is not None
+    generate_index_pdf.parse_one_pdf(
+        "https://www.enedis.fr/media/2164/download", "Enedis-NMO-CF_007E.pdf"
+    )
+    generate_index_pdf.create_vector_database()
+    assert generate_index_pdf.db is not None
 
 
-def test_save_vdb_to_file(generate_pd):
+def test_save_vdb_to_file(generate_index_pdf):
     """
     Test the save vdb to file function
     """
-    generate_pd.parse_all_pdf()
-    generate_pd.create_vector_database()
+    generate_index_pdf.parse_one_pdf(
+        "https://www.enedis.fr/media/2164/download", "Enedis-NMO-CF_007E.pdf"
+    )
+    generate_index_pdf.create_vector_database()
     test_dir = "__test1_faiss_index"
-    generate_pd.save_vdb_to_file(test_dir)
+    generate_index_pdf.save_vdb_to_file(test_dir)
     assert os.path.isdir(test_dir)
     shutil.rmtree(test_dir)
 
 
-def test_load_vdb_from_file(generate_pd):
+def test_load_vdb_from_file(generate_index_pdf):
     """
     Test the load vdb from file function
     """
-    generate_pd.parse_all_pdf()
-    generate_pd.create_vector_database()
+    generate_index_pdf.parse_one_pdf(
+        "https://www.enedis.fr/media/2164/download", "Enedis-NMO-CF_007E.pdf"
+    )
+    generate_index_pdf.create_vector_database()
     test_dir = "__test2_faiss_index"
-    generate_pd.save_vdb_to_file(test_dir)
-    generate_pd.db = None
-    assert generate_pd.db is None
-    generate_pd.load_vdb_from_file(test_dir)
-    assert generate_pd.db is not None
-    assert isinstance(generate_pd.db, FAISS)
+    generate_index_pdf.save_vdb_to_file(test_dir)
+    generate_index_pdf.db = None
+    assert generate_index_pdf.db is None
+    generate_index_pdf.load_vdb_from_file(test_dir)
+    assert generate_index_pdf.db is not None
+    assert isinstance(generate_index_pdf.db, FAISS)
     shutil.rmtree(test_dir)
 
 
-def test_similarity_search(generate_pd):
+def test_similarity_search(generate_index_pdf):
     """
     Test the similarity search function
     """
-    generate_pd.parse_all_pdf()
-    generate_pd.create_vector_database()
-    docs = generate_pd.similarity_search("electricite")
+    generate_index_pdf.parse_one_pdf(
+        "https://www.enedis.fr/media/2164/download", "Enedis-NMO-CF_007E.pdf"
+    )
+    generate_index_pdf.create_vector_database()
+    docs = generate_index_pdf.similarity_search("electricite")
+    assert isinstance(docs, list)
+    if len(docs) > 0:
+        assert isinstance(docs[0], Document)
+
+
+def test_parse_csv(generate_index_csv):
+    """
+    Test the parse function for csv
+    """
+    generate_index_csv.parse_csv()
+    test_key = {"page_content": [], "metadata": [], "type": []}
+    assert len(generate_index_csv.docs) > 0
+    assert isinstance(generate_index_csv.docs[0], Document)
+    assert generate_index_csv.docs[0].__dict__.keys() == test_key.keys()
+
+
+def test_csv_create_vector_database(generate_index_csv):
+    """
+    Test the create vector database function for csv
+    """
+    generate_index_csv.parse_csv()
+    generate_index_csv.docs = generate_index_csv.docs[:5]
+    generate_index_csv.create_vector_database()
+    assert generate_index_csv.db is not None
+
+
+def test_csv_save_vdb_to_file(generate_index_csv):
+    """
+    Test the save vdb to file function for csv
+    """
+    generate_index_csv.parse_csv()
+    generate_index_csv.docs = generate_index_csv.docs[:5]
+    generate_index_csv.create_vector_database()
+    test_dir = "__test1_faiss_index_csv"
+    generate_index_csv.save_vdb_to_file(test_dir)
+    assert os.path.isdir(test_dir)
+    shutil.rmtree(test_dir)
+
+
+def test_csv_load_vdb_from_file(generate_index_csv):
+    """
+    Test the load vdb from file function for csv
+    """
+    generate_index_csv.parse_csv()
+    generate_index_csv.docs = generate_index_csv.docs[:5]
+    generate_index_csv.create_vector_database()
+    test_dir = "__test2_faiss_index_csv"
+    generate_index_csv.save_vdb_to_file(test_dir)
+    generate_index_csv.db = None
+    assert generate_index_csv.db is None
+    generate_index_csv.load_vdb_from_file(test_dir)
+    assert generate_index_csv.db is not None
+    assert isinstance(generate_index_csv.db, FAISS)
+    shutil.rmtree(test_dir)
+
+
+def test_csv_similarity_search(generate_index_csv):
+    """
+    Test the similarity search function for csv
+    """
+    generate_index_csv.parse_csv()
+    generate_index_csv.docs = generate_index_csv.docs[:5]
+    generate_index_csv.create_vector_database()
+    docs = generate_index_csv.similarity_search("electricite")
     assert isinstance(docs, list)
     if len(docs) > 0:
         assert isinstance(docs[0], Document)

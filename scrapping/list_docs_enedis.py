@@ -16,7 +16,7 @@ class ScrapListDocsEnedis:
         self.dataframe = None
         self.num_page = 0
 
-    def load_page(self):
+    def load_page(self) -> None:
         """Load a page and parse it, then store it in self.curent_page"""
         if self.num_page < 0:
             return
@@ -85,7 +85,7 @@ class ScrapListDocsEnedis:
                         new_data[4] = [str(elem[0]).strip().replace(",", ";")]
             self.data.append(new_data)
 
-    def scrap_all(self):
+    def scrap_all(self) -> None:
         """
         Scrap all pages of the enedis document page
         """
@@ -95,7 +95,7 @@ class ScrapListDocsEnedis:
             self.load_page()
             self.get_page_data()
 
-    def create_dataframe(self):
+    def create_dataframe(self) -> None:
         """
         Create the dataframe from all data collected
         """
@@ -115,7 +115,7 @@ class ScrapListDocsEnedis:
             ],
         )
 
-    def save_dataframe_to_csv(self, path="documents_enedis.csv"):
+    def save_dataframe_to_csv(self, path="documents_enedis.csv") -> None:
         """
         Save the documents in a csv
         """

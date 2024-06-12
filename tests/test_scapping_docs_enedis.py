@@ -45,7 +45,7 @@ def test_get_page_data(scrap_with_page_loaded):
 def test_create_dataframe(scrap_all_done_no_df):
     scrap_all_done_no_df.create_dataframe()
     assert scrap_all_done_no_df.dataframe is not None
-    assert type(scrap_all_done_no_df.dataframe) == pd.core.frame.DataFrame
+    assert isinstance(scrap_all_done_no_df.dataframe, pd.DataFrame)
 
 
 def test_save_dataframe_to_csv(scrap_all_done):

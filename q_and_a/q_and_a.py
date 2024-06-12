@@ -1,4 +1,4 @@
-from indexing.indexing_data import IndexingPdfData
+from indexing.indexing_pdf import IndexingPdfData
 from langchain.chains.question_answering import load_qa_chain
 from langchain_huggingface import HuggingFaceEndpoint
 from configs.CFG import CFG, my_prompt_template
@@ -35,7 +35,7 @@ class QAndA:
             chain_type=self.config.chain.chain_type,
             verbose=self.config.chain.verbose,
         )
-        self.chain.llm_chain.prompt.template = my_prompt_template
+        self.chain.llm_chain.prompt.template = my_prompt_template  # type: ignore
         self.history = []
 
     def ask_question(self, query: str, save_history: bool = False) -> Dict[str, Any]:

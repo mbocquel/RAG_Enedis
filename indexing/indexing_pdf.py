@@ -1,11 +1,12 @@
 import requests
-import pandas as pd
 import os
 from langchain_community.document_loaders import UnstructuredPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
+from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
+from typing import List
 from configs.CFG import CFG
 from configs.config import Config
 import logging
@@ -27,22 +28,11 @@ class IndexingPdfData:
     chunks of data, embed the text into a vector using HuggingFaceEmbeddings
     """
 
-    def __init__(self, dataframe: pd.DataFrame) -> None:
-        assert dataframe.shape[1] == 8, "IndexingPdfData -> Wrong dataframe shape"
-        assert list(dataframe.columns) == [
-            "title",
-            "url",
-            "type",
-            "date",
-            "content",
-            "file_name",
-            "file_type",
-            "file_size",
-        ]
-        self.config = Config.from_json(CFG).indexing
+    def __init__(self) -> None:
+        self.config = Config.from_json(CFG).indexing_pdf
         self.docs = []
+        self.set_url_added = set()
         self.db = None
-        self.dataframe = dataframe
         self.pdf_folder_path = self.config.pdf_folder_path
         if not os.path.isdir(self.pdf_folder_path):
             os.mkdir(self.pdf_folder_path)
@@ -52,28 +42,20 @@ class IndexingPdfData:
         self.embeddings = HuggingFaceEmbeddings()
         logger.info("IndexingPdfData initialised")
 
-    def parse_one_pdf(self, index, row):
+    def parse_one_pdf(self, url: str, file_name: str) -> None:
         """Download the pdf and add it to the list of parced element"""
-        file = row["url"]
-        file_name = row["file_name"]
-        logger.info(f"{index} - File {file_name} loaded")
-        pdf = requests.get(file, timeout=10)
-        file_path = os.path.join(self.pdf_folder_path, row["file_name"])
+        logger.info(f"File {file_name} loaded")
+        pdf = requests.get(url, timeout=10)
+        file_path = os.path.join(self.pdf_folder_path, file_name)
         with open(file_path, "wb") as f:
             f.write(pdf.content)
         loader = UnstructuredPDFLoader(file_path)
         doc = loader.load()
         self.docs.append(self.text_splitter.split_documents(doc))
         os.remove(file_path)
+        self.set_url_added.add((url, file_name))
 
-    def parse_all_pdf(self):
-        """
-        Download all the pdf and parse them
-        """
-        for index, row in self.dataframe.iterrows():
-            self.parse_one_pdf(index, row)
-
-    def create_vector_database(self):
+    def create_vector_database(self) -> None:
         """
         Create the vector database using FAISS from the extracted documents
         """
@@ -84,7 +66,7 @@ class IndexingPdfData:
         logger.info("HuggingFace token loaded from .env file")
         self.db = FAISS.from_documents(docs, self.embeddings)
 
-    def save_vdb_to_file(self, path: str):
+    def save_vdb_to_file(self, path: str) -> None:
         """
         Save the vector database to a file for future use
         """
@@ -93,7 +75,7 @@ class IndexingPdfData:
         logger.info(f"Vector database saved localy in {path}")
         self.db.save_local(path)
 
-    def load_vdb_from_file(self, path: str):
+    def load_vdb_from_file(self, path: str) -> None:
         """
         Load a vector database from a file
         """
@@ -104,12 +86,12 @@ class IndexingPdfData:
             path, self.embeddings, allow_dangerous_deserialization=True
         )
 
-    def similarity_search(self, query: str):
+    def similarity_search(self, query: str, k=4) -> List[Document]:
         """
         Find documents in the database that are similar to the querry and return them
         """
         if self.db is None:
             logger.error("Similarity search requiered but ne vector database is found")
-            return
+            return []
         logger.info(f"Similarity search done with {query}")
-        return self.db.similarity_search(query)
+        return self.db.similarity_search(query=query, k=k)

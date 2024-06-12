@@ -17,8 +17,5 @@ all: install lint test format
 get_list:
 	python get_list_docs.py
 
-run_app:
-	streamlit run front_app.py --server.port=8501
-
-run_chat:
-	streamlit run chat_app.py --server.port=8501
+run:
+	streamlit run Homepage.py --server.port=8501

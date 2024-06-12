@@ -8,7 +8,7 @@ from typing import List
 from configs.CFG import CFG
 from configs.config import Config
 import logging
-
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 handler = logging.FileHandler(f"logs/{__name__}.log")
@@ -30,11 +30,12 @@ class IndexingCSV:
         self.config = Config.from_json(CFG).indexing_csv
         if not os.path.isfile(self.config.csv_doc_path):
             raise FileNotFoundError("Wrong vector database path")
+        self.dataframe = pd.read_csv(self.config.csv_doc_path, index_col=0)
         self.docs = []
         self.db = None
+        self.embeddings = HuggingFaceEmbeddings()
         if os.path.isdir(self.config.csv_vdb_path) and load_existing:
             self.load_vdb_from_file(self.config.csv_vdb_path)
-        self.embeddings = HuggingFaceEmbeddings()
         self.loader = CSVLoader(self.config.csv_doc_path)
         logger.info("IndexingCSV initialised")
 

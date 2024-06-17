@@ -13,7 +13,7 @@ def test_no_function_call(rag):
     """
     Test the RAG_OpenAI class without calling any function
     """
-    reponse = rag.ask_question("Bonjour !")
+    reponse = rag.ask_question_invoke("Bonjour !")
     assert len(reponse) > 1
     assert isinstance(reponse[-1].content, str)
     for message in reponse:
@@ -24,7 +24,7 @@ def test_function_call(rag):
     """
     Test the RAG_OpenAI class with calling a function
     """
-    reponse = rag.ask_question(
+    reponse = rag.ask_question_invoke(
         "Quel est le role d'Enedis dans le comptage de l'électricité en France ?"
     )
     assert len(reponse) > 1

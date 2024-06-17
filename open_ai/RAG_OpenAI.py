@@ -108,15 +108,15 @@ class RAG_OpenAI:
         """Find context to answer a question"""
         return self.index.similarity_search(question, k=5)
 
-    # def ask_question(self, question: str) -> List[AnyMessage]:
-    #     """Ask a question to the bot"""
-    #     response = self.bot.app.invoke(
-    #         {"messages": [HumanMessage(content=question)]},
-    #         config={"configurable": {"thread_id": self.thread_id}},
-    #     )
-    #     return response["messages"]
+    def ask_question_invoke(self, question: str) -> List[AnyMessage]:
+        """Ask a question to the bot"""
+        response = self.bot.app.invoke(
+            {"messages": [HumanMessage(content=question)]},
+            config={"configurable": {"thread_id": self.thread_id}},
+        )
+        return response["messages"]
 
-    def ask_question(self, question: str):
+    def ask_question_stream(self, question: str):
         """Ask a question to the bot and stream the response"""
         for response in self.bot.app.stream(
             {"messages": [HumanMessage(content=question)]},

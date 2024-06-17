@@ -8,7 +8,7 @@ indexing = IndexingPdfData()
 indexing.parse_one_pdf(
     "https://www.enedis.fr/media/2057/download", "Enedis-NOI-RES_46E.pdf"
 )
-indexing.create_vector_database()
+# indexing.create_vector_database()
 
 
 @pytest.fixture()

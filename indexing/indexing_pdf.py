@@ -1,6 +1,5 @@
-import requests
 import os
-from langchain_community.document_loaders import UnstructuredPDFLoader
+from langchain_community.document_loaders import OnlinePDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
@@ -39,32 +38,32 @@ class IndexingPdfData:
         self.text_splitter = CharacterTextSplitter(
             chunk_size=self.config.chunk_size, chunk_overlap=self.config.chunk_overlap
         )
+        _ = load_dotenv(find_dotenv())
         self.embeddings = HuggingFaceEmbeddings()
         logger.info("IndexingPdfData initialised")
 
     def parse_one_pdf(self, url: str, file_name: str) -> None:
-        """Download the pdf and add it to the list of parced element"""
+        """Download the pdf and add it to the vector database"""
         logger.info(f"File {file_name} loaded")
-        pdf = requests.get(url, timeout=10)
-        file_path = os.path.join(self.pdf_folder_path, file_name)
-        with open(file_path, "wb") as f:
-            f.write(pdf.content)
-        loader = UnstructuredPDFLoader(file_path)
-        doc = loader.load()
-        self.docs.append(self.text_splitter.split_documents(doc))
-        os.remove(file_path)
-        self.set_url_added.add((url, file_name))
-
-    def create_vector_database(self) -> None:
-        """
-        Create the vector database using FAISS from the extracted documents
-        """
-        if len(self.docs) == 0:
+        if (url, file_name) in self.set_url_added:
+            logger.info(f"File {file_name} already loaded")
             return
-        docs = [item for sublist in self.docs for item in sublist]
-        _ = load_dotenv(find_dotenv())
-        logger.info("HuggingFace token loaded from .env file")
-        self.db = FAISS.from_documents(docs, self.embeddings)
+        try:
+            loader = OnlinePDFLoader(url)
+            doc = loader.load()
+            for d in doc:
+                d.metadata["url"] = url
+                d.metadata["source"] = file_name
+            docs = self.text_splitter.split_documents(doc)
+            db = FAISS.from_documents(docs, self.embeddings)
+            if self.db is None:
+                self.db = db
+            else:
+                self.db.merge_from(db)
+            self.set_url_added.add((url, file_name))
+        except Exception:
+            logger.error(f"Error while loading {url}")
+            return
 
     def save_vdb_to_file(self, path: str) -> None:
         """

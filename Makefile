@@ -1,5 +1,5 @@
 install:
-	sudo apt update && sudo apt install ffmpeg libsm6 libxext6  -y
+	sudo apt update && sudo apt install ffmpeg libsm6 libxext6 poppler-utils python-dev graphviz libgraphviz-dev pkg-config -y
 	pip install --upgrade pip &&\
 			pip install -r requirements.txt
 

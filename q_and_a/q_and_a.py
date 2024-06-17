@@ -1,3 +1,8 @@
+"""
+This module contains the class QAndA that manage the retrival of information from the database. It doesn't use direclly the 
+mistral API but instead use HuggingFace through langchain to interact with the mistral LLM.
+"""
+
 from indexing.indexing_pdf import IndexingPdfData
 from langchain.chains.question_answering import load_qa_chain
 from langchain_huggingface import HuggingFaceEndpoint

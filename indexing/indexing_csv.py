@@ -42,6 +42,7 @@ class IndexingCSV:
     def parse_csv(self) -> List[Document]:
         """Parse the CSV into a list of Documents"""
         self.docs = self.loader.load()
+        self.create_vector_database()
         return self.docs
 
     def create_vector_database(self) -> FAISS:

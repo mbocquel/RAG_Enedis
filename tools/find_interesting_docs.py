@@ -2,7 +2,8 @@ from langchain.tools import tool
 from indexing.indexing_csv import IndexingCSV
 from indexing.indexing_pdf import IndexingPdfData
 from typing import List
-from q_and_a.q_and_a import QAndA
+from langchain_core.documents import Document
+
 
 index = IndexingCSV(load_existing=True)
 if index.db is None:
@@ -13,15 +14,11 @@ index_pdf = IndexingPdfData()
 
 
 @tool
-def trouver_des_documents_interessant(
-    question: str, nombre_de_documents: int = 3
-) -> List[dict]:
+def list_interesting_documents(query: str, number_of_documents: int = 3) -> List[dict]:
     """
-    Recherche dans une base de donnee vectorielle pour trouver les meilleurs documents qui repondent a la demande utilisateur.
-    Renvoie un dictionnaire comportant l'URL des documents qui permettra a l'utilisateur de les telecharger,
-    ainsi que des informations complementaires sur les documents
+    Function that returns a list of documents in the library related to a topic.
     """
-    results = index.similarity_search(query=question, k=nombre_de_documents)
+    results = index.similarity_search(query=query, k=number_of_documents)
     to_return = []
     for result in results:
         row = result.metadata["row"]
@@ -30,15 +27,24 @@ def trouver_des_documents_interessant(
 
 
 @tool
-def rechercher_une_information_dans_un_pdf(
-    question: str, url_du_pdf: str, nom_du_pdf: str
-) -> str:
+def find_context_to_answer_a_question(question: str) -> List[Document]:
     """
-    Telecharge un fichier pdf, puis recherche des informations qui peuvent repondre a la questions dans ce pdf.
+    Function that find context to answer a specific question.
     """
-    if (url_du_pdf, nom_du_pdf) not in index_pdf.set_url_added:
-        index_pdf.parse_one_pdf(url_du_pdf, nom_du_pdf)
-        index_pdf.create_vector_database()
-    q_and_a = QAndA(index_pdf)
-    reponse = q_and_a.ask_question(query=question)
-    return reponse["output_text"]
+    dataframe_rows = [
+        result.metadata["row"]
+        for result in index.similarity_search(query=question, k=3)
+    ]
+    list_documents = [
+        (
+            index.dataframe.iloc[row, :].to_dict().get("url", ""),
+            index.dataframe.iloc[row, :].to_dict().get("file_name", ""),
+        )
+        for row in dataframe_rows
+    ]
+
+    for doc in list_documents:
+        if (doc[0], doc[1]) not in index_pdf.set_url_added:
+            index_pdf.parse_one_pdf(doc[0], doc[1])
+    # index_pdf.create_vector_database()
+    return index_pdf.similarity_search(question)

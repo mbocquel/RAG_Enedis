@@ -45,6 +45,15 @@ class Agent:
         self.app = self.workflow.compile(checkpointer=self.checkpointer)
 
     def should_continue(self, state: AgentState) -> Literal["tools", END]:  # type: ignore
+        """
+        Determines whether the conversation should continue or end based on the agent's state.
+
+        Args:
+            state (AgentState): The current state of the agent.
+
+        Returns:
+            Literal["tools", END]: The next node to route to. If the agent should continue to the "tools" node, it returns "tools". Otherwise, it returns END to indicate the end of the LangGraph workflow.
+        """
         messages = state["messages"]
         last_message = messages[-1]
         # If the LLM makes a tool call, then we route to the "tools" node
@@ -56,6 +65,15 @@ class Agent:
         return END
 
     def call_model(self, state: AgentState):
+        """
+        Calls the model to generate a response based on the given agent state.
+
+        Args:
+            state (AgentState): The current state of the agent.
+
+        Returns:
+            dict: A dictionary containing the generated response as a list of messages.
+        """
         messages = state["messages"]
         if self.system_prompt:
             messages = [SystemMessage(content=self.system_prompt)] + messages
